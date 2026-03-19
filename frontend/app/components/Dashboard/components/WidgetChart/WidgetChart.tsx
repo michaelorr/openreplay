@@ -142,10 +142,42 @@ function WidgetChart(props: Props) {
           params.density,
         );
 
-        drillDownFilter.merge({
+        // Parse breakdown filters from the clicked series name
+        const breakdownFilters: any[] = [];
+        const breakdowns = _metric.breakdowns;
+        const seriesName: string | undefined = event.seriesName;
+        if (seriesName && breakdowns && breakdowns.length > 0) {
+          const baseName = seriesName.startsWith('Previous ')
+            ? seriesName.slice(9)
+            : seriesName;
+          const seriesNames: string[] = _metric.series.map((s: any) => s.name);
+          let breakdownPath = '';
+          for (const sName of seriesNames) {
+            if (baseName.startsWith(sName + ' / ')) {
+              breakdownPath = baseName.slice(sName.length + 3);
+              break;
+            }
+          }
+          if (breakdownPath) {
+            const levels = breakdownPath.split(' / ');
+            for (let i = 0; i < levels.length && i < breakdowns.length; i++) {
+              const filterItem = filterStore.findEvent({ name: breakdowns[i] });
+              if (filterItem) {
+                filterItem.value = [levels[i]];
+                breakdownFilters.push(filterItem);
+              }
+            }
+          }
+        }
+
+        const mergeData: Record<string, any> = {
           startTimestamp: periodTimestamps.startTimestamp,
           endTimestamp: periodTimestamps.endTimestamp,
-        });
+        };
+        if (breakdownFilters.length > 0) {
+          mergeData.filters = breakdownFilters;
+        }
+        drillDownFilter.merge(mergeData);
       }
     }
   };
