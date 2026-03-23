@@ -13,9 +13,6 @@ class RnTrackerInputManager : SimpleViewManager<EditText>() {
   override fun createViewInstance(reactContext: ThemedReactContext): EditText =
     RnTrackerInput(reactContext)
 
-  companion object {
-    fun requiresMainQueueSetup(): Boolean = true
-  }
 }
 
 class RnTrackerInput(context: Context) : AppCompatEditText(context) {
@@ -26,6 +23,6 @@ class RnTrackerInput(context: Context) : AppCompatEditText(context) {
 
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
-//        Analytics.removeObservedInput(this)
+    Analytics.cleanupDeadReferences()
   }
 }

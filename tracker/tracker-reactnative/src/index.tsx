@@ -24,6 +24,11 @@ interface Options {
   logs?: boolean;
   screen?: boolean;
   debugLogs?: boolean;
+  debugImages?: boolean;
+  wifiOnly?: boolean;
+  fps?: number;
+  screenshotFrequency?: 'low' | 'standard' | 'high';
+  screenshotQuality?: 'low' | 'standard' | 'high';
 }
 
 interface IORTrackerConnector extends TurboModule {
@@ -110,15 +115,20 @@ export function sendMessage(type: string, msg: string) {
   ORTrackerConnector.sendMessage(type, msg);
 }
 
-
 let patched = false;
 const patchNetwork = (
   ctx = global,
   isServiceUrl = () => false,
-  opts: Partial<NetworkOptions>
+  opts: Partial<NetworkOptions> = {}
 ) => {
   if (!patched) {
-    network(ctx, ORTrackerConnector.networkRequest as any, isServiceUrl, opts);
+    const rnOpts: Partial<NetworkOptions> = { mode: 'all', ...opts };
+    network(
+      ctx,
+      ORTrackerConnector.networkRequest as any,
+      isServiceUrl,
+      rnOpts
+    );
     patched = true;
   }
 };

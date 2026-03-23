@@ -1,7 +1,6 @@
 package com.openreplay.reactnative
 
 import android.content.Context
-import android.view.View
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.views.view.ReactViewGroup
@@ -13,9 +12,6 @@ class RnTrackerSanitizedViewManager : ViewGroupManager<RnTrackerSanitizedView>()
   override fun createViewInstance(reactContext: ThemedReactContext): RnTrackerSanitizedView =
     RnTrackerSanitizedView(reactContext)
 
-  companion object {
-    fun requiresMainQueueSetup(): Boolean = true
-  }
 }
 
 class RnTrackerSanitizedView(context: Context) : ReactViewGroup(context) {
